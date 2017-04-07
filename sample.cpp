@@ -156,9 +156,9 @@ printHelp (int, char **argv)
               "                     -no_vis_result = flag to stop visualizing the generated pcd\n");
 }
 
-/*
+
 int
-main (int argc, char **argv)
+generate_holo (int argc, char **argv)
 {
   print_info ("Convert a CAD model to a point cloud using uniform sampling. For more information, use: %s -h\n",
               argv[0]);
@@ -176,18 +176,17 @@ main (int argc, char **argv)
   parse_argument (argc, argv, "-leaf_size", leaf_size);
   bool vis_result = ! find_switch (argc, argv, "-no_vis_result");
 
-  // Parse the command line arguments for .ply and PCD files
+  // Parse the command line arguments for .obj and PCD files
   std::vector<int> pcd_file_indices = parse_file_extension_argument (argc, argv, ".pcd");
   if (pcd_file_indices.size () != 1)
   {
     print_error ("Need a single output PCD file to continue.\n");
     return (-1);
   }
-  std::vector<int> ply_file_indices = parse_file_extension_argument (argc, argv, ".ply");
   std::vector<int> obj_file_indices = parse_file_extension_argument (argc, argv, ".obj");
   if (ply_file_indices.size () != 1 && obj_file_indices.size () != 1)
   {
-    print_error ("Need a single input PLY/OBJ file to continue.\n");
+    print_error ("Need a single input OBJ file to continue.\n");
     return (-1);
   }
 
@@ -220,26 +219,6 @@ main (int argc, char **argv)
   triangleMapper->Update();
   polydata1 = triangleMapper->GetInput();
 
-  bool INTER_VIS = false;
-
-  if (INTER_VIS)
-  {
-    visualization::PCLVisualizer vis;
-    vis.addModelFromPolyData (polydata1, "mesh1", 0);
-    vis.setRepresentationToSurfaceForAllActors ();
-    vis.spin();
-  }
-
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_1 (new pcl::PointCloud<pcl::PointXYZ>);
-  uniform_sampling (polydata1, SAMPLE_POINTS_, *cloud_1);
-
-  if (INTER_VIS)
-  {
-    visualization::PCLVisualizer vis_sampled;
-    vis_sampled.addPointCloud (cloud_1);
-    vis_sampled.spin ();
-  }
-
   // Voxelgrid
   VoxelGrid<PointXYZ> grid_;
   grid_.setInputCloud (cloud_1);
@@ -256,4 +235,4 @@ main (int argc, char **argv)
   }
 
   savePCDFileASCII (argv[pcd_file_indices[0]], *res);
-}	*/ // For reference
+}

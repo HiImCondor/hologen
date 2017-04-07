@@ -1,0 +1,1 @@
+int generate_holo (int argc, char **argv);
